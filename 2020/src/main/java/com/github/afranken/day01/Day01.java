@@ -7,10 +7,9 @@ import java.util.Objects;
  * This implements the answer to Day 2020/12/01
  * https://adventofcode.com/2020/day/1
  */
-public class Day01 {
+class Day01 {
 
   static int NOT_FOUND = -1;
-  static int ADDITION_RESULT = 2020;
 
   /**
    * Solution using Java 8+ API. Not sure if this is actually better or more readable.
@@ -19,7 +18,7 @@ public class Day01 {
     return input
         .stream()
         .flatMap(a -> input.stream()
-            .filter(b -> !Objects.equals(b, a) && a + b == 2020)
+            .filter(b -> inputsSumCorrectly(a, b))
             .map(b -> a * b)
         )
         .findAny()
@@ -30,20 +29,17 @@ public class Day01 {
    * Simplest solution by iterating across input twice and trying to multiply
    */
   static int computeSimple(List<Integer> input) {
-    int result = NOT_FOUND;
-
-    for (int i = 0; i < input.size(); i++) {
-      int element1 = input.get(i);
-      for (int j = 0; j < input.size(); j++) {
-        if (i != j) {
-          int element2 = input.get(j);
-          int addResult = element1 + element2;
-          if (ADDITION_RESULT == addResult) {
-            return element1 * element2;
-          }
+    for (Integer element1 : input) {
+      for (Integer element2 : input) {
+        if (inputsSumCorrectly(element1, element2)) {
+          return element1 * element2;
         }
       }
     }
-    return result;
+    return NOT_FOUND;
+  }
+
+  private static boolean inputsSumCorrectly(Integer a, Integer b) {
+    return !Objects.equals(b, a) && a + b == 2020;
   }
 }
