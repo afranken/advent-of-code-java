@@ -1,7 +1,6 @@
 package com.github.afranken.day01;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.HashMap;
 
 /**
  * This implements the answer to Day 2020/12/01
@@ -12,34 +11,23 @@ class Day01 {
   static int NOT_FOUND = -1;
 
   /**
-   * Solution using Java 8+ API. Not sure if this is actually better or more readable.
+   * Implements Part1 of the Day1 puzzle.
+   * This is an optimized twoSum with only one pass-through of the incoming Array/List, making
+   * this a O(N) runtime while trading for memory
    */
-  static int compute(List<Integer> input) {
-    return input
-        .stream()
-        .flatMap(a -> input.stream()
-            .filter(b -> inputsSumCorrectly(a, b))
-            .map(b -> a * b)
-        )
-        .findAny()
-        .orElse(NOT_FOUND);
-  }
+  static int computePart1(Integer[] inputs, int target) {
+    var lookupTable = new HashMap<Integer, Integer>();
 
-  /**
-   * Simplest solution by iterating across input twice and trying to multiply
-   */
-  static int computeSimple(List<Integer> input) {
-    for (Integer element1 : input) {
-      for (Integer element2 : input) {
-        if (inputsSumCorrectly(element1, element2)) {
-          return element1 * element2;
-        }
+    for (var i = 0; i < inputs.length; i++) {
+      var input = inputs[i];
+      var index = lookupTable.get(target - input);
+      if (index != null) {
+        return input * inputs[index];
       }
+      lookupTable.put(input, i);
     }
+
     return NOT_FOUND;
   }
 
-  private static boolean inputsSumCorrectly(Integer a, Integer b) {
-    return !Objects.equals(b, a) && a + b == 2020;
-  }
 }
